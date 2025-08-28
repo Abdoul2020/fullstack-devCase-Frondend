@@ -112,7 +112,7 @@ public/
 
 ## Teslimat
 
-- Önerilen süre: 48 saat (gerekiyorsa belirtin).
+- Önerilen süre: 48 saat. Ne kadar erken gönderirseniz sizin açınızdan o kadar iyi olacaktır.
 - Teslim yöntemi:
   - Public bir GitHub repo oluşturup bize iletin.
 - İsteğe bağlı olarak canlı demo (Vercel) bağlantısı paylaşabilirsiniz.
