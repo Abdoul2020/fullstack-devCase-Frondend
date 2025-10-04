@@ -10,9 +10,10 @@ import {
   ChevronRightIcon,
   XCircleIcon,
 } from "lucide-react";
-import Image from "next/image";
-type RowUser = User & { children?: User[] };
-export default function usersColumns(): ColumnDef<RowUser>[] {
+import SafeImage from "@/components/ui/safe-image";
+import { UserWithChildren } from "@/lib/types/users";
+
+export default function usersColumns(): ColumnDef<UserWithChildren>[] {
   return [
     {
       id: "select",
@@ -39,7 +40,7 @@ export default function usersColumns(): ColumnDef<RowUser>[] {
       cell: ({ row }) => {
         const canExpand =
           row.getCanExpand?.() ??
-          Boolean((row.original as RowUser).children?.length);
+          Boolean((row.original as UserWithChildren).children?.length);
         if (!canExpand) return null;
         return (
           <Button
@@ -68,15 +69,15 @@ export default function usersColumns(): ColumnDef<RowUser>[] {
             className="flex items-center gap-2"
             style={{ paddingLeft: (row.depth ?? 0) * 16 }}
           >
-            <Image
+            <SafeImage
               src={row.original.avatarUrl}
-              alt={row.original.fullName}
+              alt={`${row.original.firstName} ${row.original.lastName}`}
               width={48}
               height={48}
               className="rounded-full size-12 object-cover"
             />
             <div>
-              <p className="font-bold">{row.original.fullName}</p>
+              <p className="font-bold">{`${row.original.firstName} ${row.original.lastName}`}</p>
               <p className="text-sm text-muted-foreground">
                 {row.original.email}
               </p>
@@ -86,15 +87,19 @@ export default function usersColumns(): ColumnDef<RowUser>[] {
       },
     },
     {
-      accessorKey: "role",
-      header: "Role",
-      cell: ({ row }) => row.original.role,
+      accessorKey: "userType",
+      header: "User Type",
+      cell: ({ row }) => row.original.userType,
     },
     {
       accessorKey: "isActive",
       header: "Status",
       cell: ({ row }) => {
-        return row.original.isActive ? (
+        // Handle different possible values for isActive
+        const isActiveValue = row.original.isActive;
+        const isActive = isActiveValue === true || isActiveValue === "true" || isActiveValue === 1 || isActiveValue === "1";
+        
+        return isActive ? (
           <Badge
             className="w-30 py-2 font-semibold text-sm bg-[#89D2331A] text-[#89D233]"
             variant="default"

@@ -22,9 +22,22 @@ import {
   SunIcon,
 } from "lucide-react";
 import { useSidebar } from "./ui/sidebar";
+import { AuthService } from "@/lib/api/auth";
+import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/lib/store/hooks";
+import { selectCurrentUser } from "@/lib/store/slices/usersSlice";
+import SafeImage from "./ui/safe-image";
 
 export default function Header() {
   const { toggleSidebar } = useSidebar();
+  const router = useRouter();
+  const currentUser = useAppSelector(selectCurrentUser);
+
+  const handleLogout = () => {
+    AuthService.logout();
+    router.push('/');
+    router.refresh();
+  };
 
   return (
     <Card className="-mt-6 lg:my-0 -mx-[30px] lg:mx-0 rounded-none lg:rounded-xl py-[30px]! lg:py-6! shadow-none p-6 flex-row items-center justify-center">
@@ -40,45 +53,37 @@ export default function Header() {
         <p className="text-2xl font-bold">Users</p>
         <p className="text-muted-foreground">Manage your users</p>
       </div>
-      <div className="hidden lg:flex items-center justify-center gap-3">
-        <SunIcon className="size-5" />
-        <Switch className="[&_[data-slot=switch-thumb]]:bg-primary [&_[data-slot=switch-thumb]]:size-6 h-6 w-12 data-[state=checked]:bg-input" />
-        <MoonIcon className="size-5" />
-      </div>
+      
       <div className="hidden lg:block w-px h-full bg-border" />
-      <div className="hidden lg:flex gap-[30px] items-center justify-center">
-        <GlobeIcon className="size-5" />
-        <div className="relative">
-          <BellIcon className="size-5" />
-          <Badge
-            variant="accent"
-            className="absolute -top-4 -right-4 size-6 rounded-full font-semibold"
-          >
-            12
-          </Badge>
-        </div>
-        <MailIcon className="size-5" />
-      </div>
+      
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
             className="px-2! py-2 h-auto hover:bg-input hover:text-inherit"
           >
-            <Avatar className="h-12 w-12 rounded-full grayscale">
-              <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-            </Avatar>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">Patricia Peter</span>
-              <span className="truncate text-xs text-muted-foreground">
-                Super Admin
-              </span>
+            <div className="flex items-center gap-3">
+              <SafeImage
+                src={currentUser?.avatarUrl || null}
+                alt={`${currentUser?.firstName || ''} ${currentUser?.lastName || ''}`}
+                width={48}
+                height={48}
+                className="rounded-full size-12 object-cover"
+              />
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">
+                  {currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'Loading...'}
+                </span>
+                <span className="truncate text-xs text-muted-foreground">
+                  {currentUser ? `User Type ${currentUser.userType}` : 'Loading...'}
+                </span>
+              </div>
             </div>
             <ChevronDownIcon className="ml-3 size-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={handleLogout}>
             <LogOutIcon className="size-5" />
             Logout
           </DropdownMenuItem>

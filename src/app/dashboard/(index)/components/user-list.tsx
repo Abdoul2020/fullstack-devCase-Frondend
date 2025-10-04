@@ -96,6 +96,7 @@ export default function UserList() {
           page: 1,
           totalPages: 1,
           totalItems: 1,
+          limit: 20,
         }}
         onPaginationChange={(pageIndex) => {
           router.push(`/dashboard?page=${pageIndex + 1}`);

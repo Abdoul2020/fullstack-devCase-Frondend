@@ -20,6 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTablePagination } from "./data-table-pagination";
+import { TableLoadingState, TableEmptyState, TableErrorState } from "./table-states";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -34,6 +35,9 @@ interface DataTableProps<TData, TValue> {
   onSortingChange?: (sorting: SortingState) => void;
   total: number;
   getSubRows?: (row: TData) => TData[] | undefined;
+  isLoading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -49,6 +53,9 @@ export function DataTable<TData, TValue>({
   sorting,
   total,
   getSubRows,
+  isLoading = false,
+  error = null,
+  onRetry,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -118,9 +125,17 @@ export function DataTable<TData, TValue>({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
+        {isLoading ? (
+          <TableLoadingState columns={columns.length} />
+        ) : error ? (
+          <TableErrorState 
+            columns={columns.length} 
+            error={error} 
+            onRetry={onRetry || (() => {})} 
+          />
+        ) : table.getRowModel().rows?.length ? (
+          <TableBody>
+            {table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
@@ -131,15 +146,11 @@ export function DataTable<TData, TValue>({
                   </TableCell>
                 ))}
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                Sonuç bulunamadı.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
+            ))}
+          </TableBody>
+        ) : (
+          <TableEmptyState columns={columns.length} />
+        )}
       </Table>
       <DataTablePagination table={table} total={total} />
     </div>
