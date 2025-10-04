@@ -1,6 +1,13 @@
 
-
+### Backend API
 const API_BASE_URL = 'http://localhost:3000/api/v1';
+
+
+
+Proje kök dizininde .env adında bir dosya oluşturabilirsinz ve içine aşağıdaki gibi ayar ekle (istğe bağlı)
+örn:
+PORT=4001
+
 
 ### Kurulum ve Çalıştırma
 

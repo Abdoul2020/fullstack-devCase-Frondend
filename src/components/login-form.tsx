@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { AuthService } from "@/lib/api/auth";
 import { LoginRequest } from "@/lib/types/users";
 
@@ -60,7 +66,10 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-1">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium mb-1"
+              >
                 Password
               </label>
               <Input
@@ -74,7 +83,11 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               />
             </div>
             {error && (
-              <div className="text-red-600 text-sm">{error}</div>
+              <div className="text-red-600 text-sm">
+                {error &&
+                  `${error}. Please make sure the backend is running on `}
+                <code>http://localhost:3000/api/v1</code>
+              </div>
             )}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Logging in..." : "Login"}
